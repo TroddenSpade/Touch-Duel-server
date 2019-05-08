@@ -1,0 +1,22 @@
+{
+  "name": "touch-duel-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TroddenSpade/Touch-Duel-server.git"
+  },
+  "author": "ParsaSam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TroddenSpade/Touch-Duel-server/issues"
+  },
+  "homepage": "https://github.com/TroddenSpade/Touch-Duel-server#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
