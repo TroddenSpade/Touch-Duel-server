@@ -19,10 +19,14 @@ const io = socket(server);
 const {Duels} = require('./src/models/Duel');
 
 io.on('connection', (socket) => {
-    socket.on('connection', ()=>{console.log("connected")});
+    console.log("connected");
+    console.log("userid : " + socket.id);
+    console.log("userid : " + socket.id);
 
     socket.on('CreateDuel', function(){
+        var id;
         const duel = new Duels();
+        console.log("Duel : " + socket.id);
         duel.save((err,doc)=>{
             if(err){
                 io.emit('DuelCreated',{
@@ -34,9 +38,18 @@ io.on('connection', (socket) => {
                     username: socket.username,
                     DuelID: doc._id
                 });   
-            } 
+            }
+            id = err;
         });
+        io.to('abcd123').emit('lobby',"duel");
+        io.emit('lobby',duel);
     });
+
+    socket.on('joinLoby',(lobyID)=>{
+        socket.join(`abcd123`);
+        console.log("joinded")
+    });
+
 
     socket.on('disconnect', function(){
         console.log('user disconnected');
