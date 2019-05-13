@@ -21,35 +21,45 @@ const {Duels} = require('./src/models/Duel');
 io.on('connection', (socket) => {
     console.log("connected");
     console.log("userid : " + socket.id);
-    console.log("userid : " + socket.id);
 
     socket.on('CreateDuel', function(){
-        var id;
-        const duel = new Duels();
-        console.log("Duel : " + socket.id);
+        const duel = new Duels({players:[socket.id]});
         duel.save((err,doc)=>{
             if(err){
                 io.emit('DuelCreated',{
-                    username: socket.username,
+                    username: socket.id,
                     DuelID: null
-                }); 
+                });
             }else{
                 io.emit('DuelCreated',{
-                    username: socket.username,
+                    username: socket.id,
                     DuelID: doc._id
-                });   
+                });  
+                socket.join(doc._id);
+                io.emit('lobby',doc._id);
             }
-            id = err;
         });
-        io.to('abcd123').emit('lobby',"duel");
-        io.emit('lobby',duel);
     });
 
-    socket.on('joinLoby',(lobyID)=>{
-        socket.join(`abcd123`);
-        console.log("joinded")
+    socket.on('deleteLobby',(id)=>{
+        Duels.findOneAndDelete({_id:id},(err,doc)=>{
+            return ;
+        });
     });
 
+    socket.on('joinLobby',(lobbyID)=>{
+        socket.join(lobbyID);
+        Duels.findByIdAndUpdate(lobbyID,{$push:{players:socket.id}},{new:true},(err,doc)=>{
+            socket.emit("lobbyInfo",doc);
+        });
+        io.to(lobbyID).emit("playerJoined",socket.id);
+    });
+
+    socket.on('startDuel',(lobbyID)=>{
+        Duels.findById(lobbyID,(err,duel)=>{
+            io.to(lobbyID).emit("start",duel);
+        })
+    })
 
     socket.on('disconnect', function(){
         console.log('user disconnected');
