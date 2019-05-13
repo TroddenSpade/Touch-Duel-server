@@ -6,7 +6,7 @@ const DuelSchema = mongoose.Schema({
         default:0,
     },
     players:{
-        type:[mongoose.Schema.Types.ObjectId],
+        type:[String],
     },
     wins:{
         type:[Number],
