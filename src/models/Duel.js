@@ -10,6 +10,16 @@ const DuelSchema = mongoose.Schema({
     },
     wins:{
         type:[Number],
+    },
+    times:{
+        type:[Number],
+        default:[
+            Math.random()*5000 + 1000,
+            Math.random()*5000 + 1000,
+            Math.random()*5000 + 1000,
+            Math.random()*5000 + 1000,
+            Math.random()*5000 + 1000
+        ]
     }
 });
 
