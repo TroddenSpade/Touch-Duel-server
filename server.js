@@ -26,15 +26,9 @@ io.on('connection', (socket) => {
         const duel = new Duels({players:[socket.id]});
         duel.save((err,doc)=>{
             if(err){
-                io.emit('DuelCreated',{
-                    username: socket.id,
-                    DuelID: null
-                });
+                io.emit('DuelCreated');
             }else{
-                io.emit('DuelCreated',{
-                    username: socket.id,
-                    DuelID: doc._id
-                });  
+                io.emit('DuelCreated',doc);  
                 socket.join(doc._id);
                 io.emit('lobby',doc._id);
             }
@@ -59,6 +53,15 @@ io.on('connection', (socket) => {
         Duels.findById(lobbyID,(err,duel)=>{
             io.to(lobbyID).emit("start",duel);
         })
+    })
+
+    socket.on('missed',(id)=>{
+        socket.broadcast.to(id).emit('missed');
+    })
+
+    socket.on('shoot',(id)=>{
+        console.log('one is dead')
+        io.to(id).emit('dead',socket.id);
     })
 
     socket.on('disconnect', function(){
