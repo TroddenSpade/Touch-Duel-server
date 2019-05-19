@@ -19,8 +19,7 @@ const io = socket(server);
 const {Duels} = require('./src/models/Duel');
 
 io.on('connection', (socket) => {
-    console.log("connected");
-    console.log("userid : " + socket.id);
+    console.log("userid : " + socket.id + " connected");
 
     socket.on('CreateDuel', function(){
         const duel = new Duels({players:[socket.id]});
@@ -49,22 +48,32 @@ io.on('connection', (socket) => {
         io.to(lobbyID).emit("playerJoined",socket.id);
     });
 
-    socket.on('startDuel',(lobbyID)=>{
-        Duels.findById(lobbyID,(err,duel)=>{
-            io.to(lobbyID).emit("start",duel);
+    socket.on('disconnect', function(){
+        console.log("userid : " + socket.id + " disconnected");
+    });
+
+    /////////////////////////////////////////////////////////////
+
+    socket.on('START_DUEL',(id)=>{
+        Duels.findById(id,(err,duel)=>{
+            io.to(id).emit("START",duel);
         })
     })
 
-    socket.on('missed',(id)=>{
-        socket.broadcast.to(id).emit('missed');
+    socket.on('MISSED',(id)=>{
+        socket.broadcast.to(id).emit('MISSED');
     })
 
-    socket.on('shoot',(id)=>{
-        console.log('one is dead')
-        io.to(id).emit('dead',socket.id);
+    socket.on('SHOOT',(id)=>{
+        io.to(id).emit('DEAD',socket.id);
     })
 
-    socket.on('disconnect', function(){
-        console.log('user disconnected');
-    });
+    socket.on('HEADER_SAYS_MATCH_IS_FINISHED',(id)=>{
+        io.to(id).emit('FINISH',socket.id);
+    })
+
+    socket.on('HEADER_SAYS_START_ROUND',(id)=>{
+        io.to(id).emit('START_ROUND',socket.id);
+    })
+
 });
