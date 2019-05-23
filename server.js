@@ -60,20 +60,24 @@ io.on('connection', (socket) => {
         })
     })
 
+    socket.on('POINT_TO',(data)=>{
+        io.to(data.id).emit('POINTING',data);
+    })
+
     socket.on('MISSED',(id)=>{
         socket.broadcast.to(id).emit('MISSED');
     })
 
-    socket.on('SHOOT',(id)=>{
-        io.to(id).emit('DEAD',socket.id);
+    socket.on('SHOOT',(data)=>{
+        io.to(data.id).emit('DEAD',data.dead);
     })
 
     socket.on('HEADER_SAYS_MATCH_IS_FINISHED',(id)=>{
-        io.to(id).emit('FINISH',socket.id);
+        io.to(id).emit('FINISH');
     })
 
     socket.on('HEADER_SAYS_START_ROUND',(id)=>{
-        io.to(id).emit('START_ROUND',socket.id);
+        io.to(id).emit('START_ROUND');
     })
 
 });
