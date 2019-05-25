@@ -54,10 +54,8 @@ io.on('connection', (socket) => {
 
     /////////////////////////////////////////////////////////////
 
-    socket.on('START_DUEL',(id)=>{
-        Duels.findById(id,(err,duel)=>{
-            io.to(id).emit("START",duel);
-        })
+    socket.on('HEADER_SAYS_START_DUEL',(id)=>{
+        io.to(id).emit('START');
     })
 
     socket.on('POINT_TO',(data)=>{
